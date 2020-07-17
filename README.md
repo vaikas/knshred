@@ -86,7 +86,7 @@ logs. Since I was working on the `mt-broker-controller` controller, I specified
 that I only wanted to look at them with the -m flag.
 
 ```
-./debuglogs.sh -d /tmp/3599/ -k true -m mt-broker-controller
+./debuglogs.sh -d /tmp/3599/ -k -m mt-broker-controller
 ```
 
 And now again we'll see two new files there:
