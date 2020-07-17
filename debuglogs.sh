@@ -15,8 +15,7 @@ while [ "$1" != "" ]; do
         -d | --dir )            shift
                                 DIR=$1
                                 ;;
-        -k | --k8slogs )        shift
-				K8SLOGS="yes"
+        -k | --k8slogs )        K8SLOGS="yes"
                                 ;;
         -m | --module )         shift
                                 MODULE=$1
