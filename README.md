@@ -50,6 +50,26 @@ drwxr-xr-x   4 vaikas  wheel        128 Jul 16 16:53 .
 -rw-r--r--   1 vaikas  wheel  601411238 Jul 16 16:54 k8s.log.txt
 ```
 
+## Fetching from different repos
+
+fetchlogs.sh also works for things like eventing-contrib, just use the `-r`
+flag. It defaults to eventing, so if you wanted to fetch logs for
+`eventing-contrib` you could do it like so:
+
+```
+./fetchlogs.sh -p 1378 -r eventing-contrib -k
+```
+
+It will then do the same thing and download the logs like so:
+
+```
+vaikas-a01:knshred vaikas$ ls -l /tmp/1378/
+total 69720
+-rw-r--r--  1 vaikas  wheel   1485002 Jul 17 10:17 build-log.txt
+-rw-r--r--  1 vaikas  wheel  32788863 Jul 17 10:17 k8s.log.txt
+```
+
+
 ## Shredding logs
 
 Another thing is that if there are multiple test failures, we probably want to
