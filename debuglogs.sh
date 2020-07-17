@@ -4,10 +4,9 @@
 DIR="/tmp/"
 # K8S logs from failed test Artifacts link, then download the artifacts/k8s.log.txt
 # By default assume it's here
-#K8SLOGS="/tmp/k8s.log.txt"
 K8SLOGS=
 # Which module to look for in the k8s logs. Defaults to mt-broker-controller 
-MODULE="mt-broker-controller"
+MODULE=
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -27,6 +26,7 @@ while [ "$1" != "" ]; do
 done
 
 INFILE="$DIR/build-log.txt"
+K8SFILE="$DIR/k8s.log.txt"
 
 for i in `grep 'FAIL:' $INFILE  | cut -d ' ' -f 3`
 do
@@ -42,9 +42,13 @@ do
     if [ "$K8SLOGS" != "" ]; then
 	echo "Processing k8s logs files for $MODULE in $K8SLOGS" 
 	# Then grab the k8s logs.
-	K8SOUTFILE="$K8SLOGS.$i"
+	K8SOUTFILE="$K8SFILE.$i"
 	echo "using k8s outputfile: $K8SOUTFILE"
-	# Make this (mt-broker-controller) a flag
-	`grep mt-broker-controller $K8SLOGS | grep -e 'Time taken' -e 'Reconciling' -e 'Adding to queue' -e 'successfully acquired lease' -e 'leading' | grep $NAMESPACE > $K8SOUTFILE`
+        if [ "$MODULE" != "" ]; then
+	    `grep $MODULE $K8SFILE | grep -e 'Time taken' -e 'Reconciling' -e 'Adding to queue' -e 'successfully acquired lease' -e 'leading' | grep $NAMESPACE > $K8SOUTFILE`
+	else
+	    # no module, grab all
+	    `grep -e 'Time taken' -e 'Reconciling' -e 'Adding to queue' -e 'successfully acquired lease' -e 'leading' $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
+	fi
     fi
 done
