@@ -4,8 +4,7 @@
 # By default assume it's here
 PR=
 FETCHK8SLOGS=
-# Which module to look for in the k8s logs. Defaults to mt-broker-controller 
-MODULE="mt-broker-controller"
+REPO="eventing"
 
 while [ "$1" != "" ]; do
     case $1 in
@@ -14,6 +13,9 @@ while [ "$1" != "" ]; do
                                 ;;
         -k | --k8slogs )        shift
                                 FETCHK8SLOGS="yes"
+                                ;;
+        -r | --repo )           shift
+                                REPO=$1
                                 ;;
         * )                     usage
                                 exit 1
@@ -29,12 +31,12 @@ fi
 echo "Making directory for the log files"
 `mkdir /tmp/$PR`
 
-echo "Fetching the PR deets from https://github.com/knative/eventing/pull/$PR"
-PROWLOGS=`curl -s "https://github.com/knative/eventing/pull/$PR" | grep knative-prow/pr-logs/pull/knative_eventing/$PR/pull-knative-eventing-integration-tests | cut -d '"' -f 2`
+echo "Fetching the PR deets from https://github.com/knative/$REPO/pull/$PR"
+PROWLOGS=`curl -s "https://github.com/knative/$REPO/pull/$PR" | grep knative-prow/pr-logs/pull/knative_$REPO/$PR/pull-knative-$REPO-integration-tests | cut -d '"' -f 2`
 
 echo $PROWLOGS
 
-BASE_MATCHER="gs/knative-prow/pr-logs/pull/knative_eventing/$PR/pull-knative-eventing-integration-tests/"
+BASE_MATCHER="gs/knative-prow/pr-logs/pull/knative_$REPO/$PR/pull-knative-$REPO-integration-tests/"
 
 BASE_DIR=`curl -s $PROWLOGS | grep $BASE_MATCHER | sed 's@gs@https://storage.googleapis.com@' | cut -d '"' -f 2`
 
