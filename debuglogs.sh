@@ -14,7 +14,7 @@ while [ "$1" != "" ]; do
                                 DIR=$1
                                 ;;
         -k | --k8slogs )        shift
-				K8SLOGS=$1
+				K8SLOGS="yes"
                                 ;;
         -m | --module )         shift
                                 MODULE=$1
@@ -45,10 +45,10 @@ do
 	K8SOUTFILE="$K8SFILE.$i"
 	echo "using k8s outputfile: $K8SOUTFILE"
         if [ "$MODULE" != "" ]; then
-	    `grep $MODULE $K8SFILE | grep -e 'Time taken' -e 'Reconciling' -e 'Adding to queue' -e 'successfully acquired lease' -e 'leading' | grep $NAMESPACE > $K8SOUTFILE`
+	    `grep $MODULE $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
 	else
 	    # no module, grab all
-	    `grep -e 'Time taken' -e 'Reconciling' -e 'Adding to queue' -e 'successfully acquired lease' -e 'leading' $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
+	    `grep $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
 	fi
     fi
 done
