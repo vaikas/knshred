@@ -56,7 +56,7 @@ do
 	    `grep $MODULE $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
 	else
 	    # no module, grab all
-	    `grep $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
+	    `grep $NAMESPACE $K8SFILE > $K8SOUTFILE`
 	fi
     fi
 done
