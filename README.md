@@ -16,7 +16,7 @@ seemingly functional scripts). These scripts allow you to do couple of things:
 So, you have a b0rk3d integration test, just do this to fetch the logs:
 
 ```
-./fetchlogs -p <PR>
+./fetch.sh -p <PR>
 ```
 
 So, for chaos broker testing, the lovely gift that kept on giving was
@@ -24,7 +24,7 @@ So, for chaos broker testing, the lovely gift that kept on giving was
 local machine, I'd do:
 
 ```
-./fetchlogs -p 3599
+./fetch.sh -p 3599
 ```
 
 That will only fetch the build-log.txt (build / test that will show you what
@@ -35,7 +35,7 @@ default because those logs can be huge...
 But thanks to good old `3599`, I needed those logs too, so I'd use:
 
 ```
-./fetchlogs -p 3599 -k
+./fetch.sh -p 3599 -k
 ```
 
 It will then download the logs into `/tmp/<PR>` directory, so when I ran the
@@ -52,12 +52,12 @@ drwxr-xr-x   4 vaikas  wheel        128 Jul 16 16:53 .
 
 ## Fetching from different repos
 
-fetchlogs.sh also works for things like eventing-contrib, just use the `-r`
+fetch.sh also works for things like eventing-contrib, just use the `-r`
 flag. It defaults to eventing, so if you wanted to fetch logs for
 `eventing-contrib` you could do it like so:
 
 ```
-./fetchlogs.sh -p 1378 -r eventing-contrib -k
+./fetch.sh -p 1378 -r eventing-contrib -k
 ```
 
 It will then do the same thing and download the logs like so:
@@ -78,7 +78,7 @@ up and split into their own smaller files that you could then inspect, you could
 run the following:
 
 ```
-./debuglogs.sh -d /tmp/3599/
+./shred.sh -d /tmp/3599/
 ```
 
 And since there were two lucky winners in that run that failed, after this
@@ -106,7 +106,7 @@ logs. Since I was working on the `mt-broker-controller` controller, I specified
 that I only wanted to look at them with the -m flag.
 
 ```
-./debuglogs.sh -d /tmp/3599/ -k -m mt-broker-controller
+./shred.sh -d /tmp/3599/ -k -m mt-broker-controller
 ```
 
 And now again we'll see two new files there:
