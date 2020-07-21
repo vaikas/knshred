@@ -4,6 +4,7 @@
 # By default assume it's here
 PR=
 FETCHK8SLOGS=
+FETCHMETRICSLOGS=
 REPO="eventing"
 
 while [ "$1" != "" ]; do
@@ -13,6 +14,9 @@ while [ "$1" != "" ]; do
                                 ;;
         -k | --k8slogs )        shift
                                 FETCHK8SLOGS="yes"
+                                ;;
+        -m | --metrics )        shift
+                                FETCHMETRICSLOGS="yes"
                                 ;;
         -r | --repo )           shift
                                 REPO=$1
@@ -43,13 +47,18 @@ BASE_DIR=`curl -s $PROWLOGS | grep $BASE_MATCHER | sed 's@gs@https://storage.goo
 echo $BASE_DIR
 
 BUILD_LOGS="$BASE_DIR/build-log.txt"
-K8S_LOGS="$BASE_DIR/artifacts/k8s.log.txt"
 
 echo "Fetching the build log: $BUILD_LOGS"
 `curl -s -L $BUILD_LOGS > /tmp/$PR/build-log.txt`
 
+K8S_LOGS="$BASE_DIR/artifacts/k8s.log.txt"
 if [ "$FETCHK8SLOGS" != "" ]; then
     echo "Fetching the k8s logs (these might be large...): $K8S_LOGS"
     `curl -s -L $K8S_LOGS > /tmp/$PR/k8s.log.txt`
 fi
 
+METRICS_LOGS="$BASE_DIR/artifacts/k8s.metrics.txt"
+if [ "$FETCHMETRICSLOGS" != "" ]; then
+    echo "Fetching the metrics logs (these might be large...): $METRICS_LOGS"
+    `curl -s -L $METRICS_LOGS > /tmp/$PR/k8s.metrics.txt`
+fi

@@ -13,6 +13,9 @@ seemingly functional scripts). These scripts allow you to do couple of things:
 
 ## Fetching logs
 
+
+### Fetching the build log (failed tests)
+
 So, you have a b0rk3d integration test, just do this to fetch the logs:
 
 ```
@@ -26,6 +29,8 @@ local machine, I'd do:
 ```
 ./fetch.sh -p 3599
 ```
+
+### Fetching the k8s logs (controller, webhooks, etc.)
 
 That will only fetch the build-log.txt (build / test that will show you what
 failed). If you specify the `-k` flag it will fetch also the artifacts, which
@@ -48,6 +53,23 @@ drwxrwxrwt  45 root    wheel       1440 Jul 16 16:53 ..
 -rw-r--r--   1 vaikas  wheel   10370807 Jul 16 16:53 build-log.txt
 drwxr-xr-x   4 vaikas  wheel        128 Jul 16 16:53 .
 -rw-r--r--   1 vaikas  wheel  601411238 Jul 16 16:54 k8s.log.txt
+```
+
+### Fetching the k8s metrics logs
+
+You can also fetch the k8s metrics logs. This is the result of doing a curl
+against `<apiserver>/metrics` and just dumping the results of that. You can do
+this by using the `-m` flag.
+
+```
+./fetch.sh -p 3666 -m
+```
+
+```
+vaikas-a01:knshred vaikas$ ls -l /tmp/3666
+total 6328
+-rw-r--r--  1 vaikas  wheel    50300 Jul 21 03:12 build-log.txt
+-rw-r--r--  1 vaikas  wheel  2714694 Jul 21 03:12 k8s.metrics.txt
 ```
 
 ## Fetching from different repos
