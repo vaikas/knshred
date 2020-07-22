@@ -94,6 +94,12 @@ total 69720
 
 ## Shredding logs
 
+You need to build the shred.go first
+
+```
+go build ./shred.go
+```
+
 Another thing is that if there are multiple test failures, we probably want to
 slice these a bit. So, for example if you wanted to see the failed tests broken
 up and split into their own smaller files that you could then inspect, you could
