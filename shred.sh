@@ -15,7 +15,8 @@ while [ "$1" != "" ]; do
         -d | --dir )            shift
                                 DIR=$1
                                 ;;
-        -k | --k8slogs )        K8SLOGS="yes"
+        -k | --k8slogs )        shift
+				K8SLOGS="yes"
                                 ;;
         -m | --module )         shift
                                 MODULE=$1
@@ -32,7 +33,17 @@ K8SFILE="$DIR/k8s.log.txt"
 for i in `grep 'FAIL:' $INFILE | sed 's/^ *//g' | cut -d ' ' -f 3`
 do
     echo "Fetching failures for test fail: $i"
-    NAMESPACE=`grep "$i:" $INFILE | grep "namespace is" | cut -d ':' -f 5 | sed 's/"//g' | sed 's/ //g'`
+
+    `./shred -file $INFILE -test $i`
+
+    CLEANTESTNAME=`echo $i | sed 's@/@-@g'`
+    OUTFILE="$INFILE.$CLEANTESTNAME"
+
+    if [ "$K8SLOGS" == "" ]; then
+	continue
+    fi
+
+    NAMESPACE=`grep "namespace is" $OUTFILE | cut -d ':' -f 4 | sed 's/"//g' | sed 's/ //g'`
 
     if [ "$NAMESPACE" = "" ]; then
 	echo "No namespace (probably enclosing test) found for $i, skipping"
@@ -40,22 +51,14 @@ do
     fi
 
     echo "Found namespace as: $NAMESPACE"
-
-    # Dump the failed tests here
-    CLEANTESTNAME=`echo $i | sed 's@/@-@g'`
-    OUTFILE="$INFILE.$CLEANTESTNAME"
-    `grep "$i:" $INFILE > $OUTFILE`
-
-    if [ "$K8SLOGS" != "" ]; then
-	echo "Processing k8s logs files for $MODULE in $K8SFILE"
-	# Then grab the k8s logs.
-	K8SOUTFILE="$K8SFILE.$CLEANTESTNAME"
-	echo "using k8s outputfile: $K8SOUTFILE"
-        if [ "$MODULE" != "" ]; then
-	    `grep $MODULE $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
-	else
-	    # no module, grab all
-	    `grep $NAMESPACE $K8SFILE > $K8SOUTFILE`
-	fi
+    echo "Processing k8s logs files for $MODULE in $K8SFILE"
+    # Then grab the k8s logs.
+    K8SOUTFILE="$K8SFILE.$CLEANTESTNAME"
+    echo "using k8s outputfile: $K8SOUTFILE"
+    if [ "$MODULE" != "" ]; then
+	`grep $MODULE $K8SFILE | grep $NAMESPACE > $K8SOUTFILE`
+    else
+	# no module, grab all
+	`grep $NAMESPACE $K8SFILE > $K8SOUTFILE`
     fi
 done
